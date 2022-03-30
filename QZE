@@ -11,11 +11,12 @@
     para.innerHTML = "怎麼那麼棒！！."; 
   } 
   </script> 
-</head> 
+</head>
+
 <body> 
   <input type="button" value="Change this document." onclick="change()"> 
   <h1>CGU</h1> 
   <p>好棒棒</p> 
 </body> 
-</head>
+
 </html>
