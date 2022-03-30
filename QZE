@@ -4,10 +4,10 @@
   <title>My Document</title> 
   <script type="text/javascript"> 
   function change() { 
-    var header = document.getElementsByid("H1").item(0); 
+    var header = document.getElementsById("z").item(0); 
     header.innerHTML = "CSIE@CGU"; 
      
-    var para = document.getElementsByid("P").item(0); 
+    var para = document.getElementsById("y").item(0); 
     para.innerHTML = "怎麼那麼棒！！."; 
   } 
   </script> 
@@ -15,8 +15,8 @@
 
 <body> 
   <input type="button" value="Change this document." onclick="change()"> 
-  <h1>CGU</h1> 
-  <p>好棒棒</p> 
+  <x id="CGU"></x> 
+  <y id="好棒棒"></y>
 </body> 
 
 </html>
