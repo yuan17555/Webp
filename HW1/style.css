@@ -1,0 +1,25 @@
+h3{
+    color: white;
+}
+
+table, th, td{
+    border: 3px solid black;
+}
+
+.frame0{
+    border: 20px outset purple;
+    background-color:white;
+    text-align: center;
+}
+
+.frame1{
+    border: 10px outset blue;
+    background-color:blue;
+    text-align: center;
+}
+
+.frame2{
+    border: 10px outset red;
+    background-color:red;
+    text-align: center;
+}
