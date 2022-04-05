@@ -16,7 +16,7 @@ function reflashString()    //add new char
 
 //---main function---
 
-for (let i = 0; i < 100; i++)
+for (var i = 0; i < 1000; i++)
 {
     setTimeout(reflashString, 400 * i);
 }
