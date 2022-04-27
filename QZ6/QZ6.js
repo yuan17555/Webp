@@ -3,5 +3,5 @@ setInterval(function myFunction() {
   var hh = now.getHours();
   var mm = now.getMinutes();
   var ss = now.getSeconds();
-  document.getElementById('clock').innerHTML = hh + ":" + mm + ":" + ss;
+  document.getElementById('clock').innerHTML = hh + " : " + mm + " : " + ss;
 }, 1000);
