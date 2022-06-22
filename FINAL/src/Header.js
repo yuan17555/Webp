@@ -14,7 +14,7 @@ function Header(){
     return (
     <Menu>
         <Menu.Item as={Link} to="/">
-            SocialCOOL
+            Fake instagram
         </Menu.Item>
         {/* <Menu.Menu>
             <Search />
