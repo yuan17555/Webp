@@ -53,9 +53,9 @@ function NewPosts(){
                 size='small' 
                 floated='left' 
             />
-            <Button basic as="lable" htmlFor="post-image">
-                上傳文章圖片
-            </Button>
+//             <Button basic as="lable" htmlFor="post-image">
+//                 上傳文章圖片
+//             </Button>
             <Form.Input 
                 type='file' 
                 id="post-image" 
@@ -71,7 +71,7 @@ function NewPosts(){
                 value={content} 
                 onChange = {(e) => setContent(e.target.value)} 
             />
-            <Form.Button loading={isLoading}>送出</Form.Button>
+            <Form.Button loading={isLoading}>送出文章</Form.Button>
         </Form>
     </Container>
     );
