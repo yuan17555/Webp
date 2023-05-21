@@ -13,8 +13,8 @@ class Game:
         self.userA_chesses = ["A", "B", "C", "e", "f", "g"]
         self.userX_chesses = ["X", "Y", "Z", "u", "v", "w"]
 
-        self.userX_detect_chesses=np.zeros((6, 5, 5))
-        self.userX_detect_chesses = self.userX_detect_chesses.astype(int)
+
+        self.detect_chesses = np.zeros((6, 5, 5), dtype=int)
         # every 2D matrix would be like: (every element is actually '0', but sign it with other character)
         # [[* * 0 * *]
         #  [* 0 0 0 *]
@@ -57,6 +57,17 @@ class Game:
             for k in range(8):
                 print(self.current_state[j][k], end=" ")
             print()
+
+    def is_valid_position(self,px, py):
+        # 這裡會檢查輸入的旗子是否在場上 在場上可以移動 輸入旗子不再場上就return false
+        # position = np.where(self.current_state == chess)
+        if px>7 or px<0 or py>7 or py<0:
+            print(px, py,"wrong position")
+            return False
+        else:
+            print(px, py)
+            return True
+
 
     def is_valid(self, chess, px, py):
         # 這裡會檢查輸入的旗子是否在場上 在場上可以移動 輸入旗子不再場上就return false
@@ -237,18 +248,18 @@ class Game:
         self.current_state[py][px] = chess
 
     def AI_generate_chess_index(self):
-        vaild_falg = False
-        while not vaild_falg:
+        valid_flag = False
+        while not valid_flag:
             # 選擇移動棋子
             chess_index = random.randint(0, len(self.userX_chesses)-1)
             chess = self.userX_chesses[chess_index]
 
             # 選擇移動方式
-            if chess == "X":
+            if chess == "X" or "A":
                 move_range = [[0, 1], [0, -1], [1, 0],[-1, 0], [2, 0], [-2, 0], [0, 2], [0, -2]]
                 move_index = random.randrange(8)
                 moving = move_range[move_index]
-            elif chess == "Y" or chess == "Z":
+            elif chess == "Y" or chess == "Z" or chess == "B" or chess == "C":
                 move_range = [[1, 1], [-1, -1], [1, -1], [-1, 1]]
                 move_index = random.randrange(4)
                 moving = move_range[move_index]
@@ -261,7 +272,7 @@ class Game:
             if len(position[0]) != 0:
                 position_y = int(position[0])+moving[1]
                 position_x = int(position[1])+moving[0]
-                vaild_falg = self.is_valid(chess, position_x, position_y)
+                valid_flag = self.is_valid(chess, position_x, position_y)
 
         return chess, position_x, position_y
 
@@ -310,47 +321,64 @@ class Game:
         position_y=int(position[0])
         position_x=int(position[1])
 
-        if(chess=="X"): chess_counter=0
-        elif(chess=="Y"): chess_counter=1
-        elif(chess=="Z"): chess_counter=2
-        elif(chess=="u"): chess_counter=3
-        elif(chess=="v"): chess_counter=4
-        elif(chess=="w"): chess_counter=5
+        if(chess=="X" or chess =="A"): chess_counter=0
+        elif(chess=="Y" or chess == "B"): chess_counter=1
+        elif(chess=="Z" or chess == "C"): chess_counter=2
+        elif(chess=="u" or chess == "e"): chess_counter=3
+        elif(chess=="v" or chess == "f"): chess_counter=4
+        elif(chess=="w" or chess == "g"): chess_counter=5
         else: print("chess_counter error")
+
+        print(chess)
 
         correction = 2  # for matrix position correcting
 
         for y_counter in range(2, -3 ,-1):
-            if(y_counter%2==0):  # y_counter = 2 or -2
+            if(y_counter==2 or y_counter==-2):  # y_counter = 2 or -2
                 x_counter=0
-                if self.is_valid(chess,position_x+x_counter,position_y+y_counter)==True:
-                    if self.current_state[position_y+y_counter,position_x+x_counter] in self.userA_chesses:
+                if self.is_valid_position(position_x+x_counter,position_y-y_counter)!=False:
+                    if self.current_state[position_y-y_counter,position_x+x_counter] in self.userA_chesses:
                         # delta_set = {(0,2), (0,-2)}
-                        self.userX_detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
-            elif(y_counter%1==0):  # y_counter = 1 or -1
+                        self.detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
+                        print("PLUS")
+                    else: print("344 error")
+                else: print("345 error")
+            elif(y_counter==1 or y_counter==-1):  # y_counter = 1 or -1
                 for x_counter in range(-1 ,2 ,1):
-                    if self.is_valid(chess,position_x+x_counter,position_y+y_counter)==True:
-                        if self.current_state[position_y+y_counter,position_x+x_counter] in self.userA_chesses:
+                    if self.is_valid_position(position_x+x_counter,position_y-y_counter)!=False:
+                        if self.current_state[position_y-y_counter,position_x+x_counter] in self.userA_chesses:
                             # delta_set = {(1,-1), (1,0), (1,1), (-1,-1), (-1,0), (-1,1)}
-                            self.userX_detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
-            else:  # y_counter = 0
+                            self.detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
+                            print("PLUS")
+                        else: print("353 error")
+                    else: print("354 error")
+            elif(y_counter==0):  # y_counter = 0
                 for x_counter in range(-2, 3 ,1):
                     if x_counter != 0:
-                        if self.is_valid(chess,position_x+x_counter,position_y+y_counter)==True:
-                            if self.current_state[position_y+y_counter,position_x+x_counter] in self.userA_chesses:
+                        if self.is_valid_position(position_x+x_counter,position_y-y_counter)!=False:
+                            if self.current_state[position_y-y_counter,position_x+x_counter] in self.userA_chesses:
                                 # delta_set = {(0,-2), (0,-1), (0,1), (0,2)}
-                                self.userX_detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
+                                self.detect_chesses[chess_counter][4-(y_counter+correction)][x_counter+correction]==1
+                                print("PLUS")
+                                print(self.detect_chesses[chess_counter])
+                            else: print("363 error")
+                        else: print("364 error")
+                    else: print("365 error")
+            else: print("366 error")
+
+        # print(self.detect_chesses[chess_counter],chess_counter)
         
         for chess_counter in range(0, 6, 1):
-            self.userX_danger_chesses[chess_counter]=np.sum(self.userX_detect_chesses[chess_counter, :, :])
+            self.userX_danger_chesses[chess_counter]=np.sum(self.detect_chesses[chess_counter, :, :])
 
     def AI_generate_chess_index_with_evaluate(self):
-        max_index = np.argmax(self.userX_danger_chesses)
-        chess=self.userX_chesses[max_index]
+        chess_index = np.argmax(self.userX_danger_chesses)
+        # chess_index = random.randint(0, len(self.userX_chesses)-1)
+        chess = self.userX_chesses[chess_index]
 
         correction = 2  # for matrix position correcting
         
-        # self.userX_detect_chesses=np.zeros((6, 5, 5))
+        # self.detect_chesses=np.zeros((6, 5, 5))
         # every 2D matrix would be like: (every element is actually '0', but sign it with other character)
         #     0 1 2 3 4
         # 0 [[* * 0 * *]
@@ -363,96 +391,116 @@ class Game:
         is_empty = 1
 
         # 選擇移動的棋子
-        if chess == "X":
+        if chess == "X" or chess == "A":
             move_range = [[0, 1], [0, -1], [1, 0], [-1, 0], [2, 0], [-2, 0], [0, 2], [0, -2]]
             for y_counter in range(2,-3,-1):
                 for x_counter in range(-2,3,1):
-                    if self.userX_detect_chesses[1][4-(y_counter+correction)][x_counter+correction]==1:
+                    if self.detect_chesses[chess_index][4-(y_counter+correction)][x_counter+correction]==1:
                         for counter in range(8):
                             temp_arr=[x_counter,y_counter]
                             if np.array_equal(move_range[counter], temp_arr):
                                 moving = move_range[counter]
                                 is_empty = 0
+                                
             if is_empty==1:
-                vaild_falg = False
-                while not vaild_falg:
+                valid_flag = False
+                while not valid_flag:
                     move_index = random.randrange(8)
                     moving = move_range[move_index]
                     position = np.where(self.current_state == chess)
                     if len(position[0]) != 0:
                         position_y = int(position[0])+moving[1]
                         position_x = int(position[1])+moving[0]
-                        vaild_falg = self.is_valid(chess, position_x, position_y)
+                        valid_flag = self.is_valid(chess, position_x, position_y)
                 return chess, position_x, position_y
             
-        elif chess == "Y" or chess == "Z":
+        elif chess == "Y" or chess == "Z" or chess == "B" or chess == "C":
             move_range = [[1, 1], [-1, -1], [1, -1], [-1, 1]]
             for y_counter in range(2,-3,-1):
                 for x_counter in range(-2,3,1):
-                    if self.userX_detect_chesses[1][4-(y_counter+correction)][x_counter+correction]==1:
+                    if self.detect_chesses[chess_index][4-(y_counter+correction)][x_counter+correction]==1:
                         for counter in range(4):
                             temp_arr=[x_counter,y_counter]
                             if np.array_equal(move_range[counter], temp_arr):
                                 moving = move_range[counter]
                                 is_empty = 0
+                                
             if is_empty==1:
-                vaild_falg = False
-                while not vaild_falg:
+                valid_flag = False
+                while not valid_flag:
                     move_index = random.randrange(4)
                     moving = move_range[move_index]
                     position = np.where(self.current_state == chess)
                     if len(position[0]) != 0:
                         position_y = int(position[0])+moving[1]
                         position_x = int(position[1])+moving[0]
-                        vaild_falg = self.is_valid(chess, position_x, position_y)
+                        valid_flag = self.is_valid(chess, position_x, position_y)
                 return chess, position_x, position_y
             
         else:
             move_range = [[0, 1], [0, -1], [1, 0], [-1, 0]]
             for y_counter in range(2,-3,-1):
                 for x_counter in range(-2,3,1):
-                    if self.userX_detect_chesses[1][4-(y_counter+correction)][x_counter+correction]==1:
+                    if self.detect_chesses[chess_index][4-(y_counter+correction)][x_counter+correction]==1:
                         for counter in range(4):
                             temp_arr=[x_counter,y_counter]
                             if np.array_equal(move_range[counter], temp_arr):
                                 moving = move_range[counter]
                                 is_empty = 0
+                                
             if is_empty==1:
-                vaild_falg = False
-                while not vaild_falg:
-                    move_index = random.randrange(8)
+                valid_flag = False
+                while not valid_flag:
+                    move_index = random.randrange(4)
                     moving = move_range[move_index]
                     position = np.where(self.current_state == chess)
                     if len(position[0]) != 0:
                         position_y = int(position[0])+moving[1]
                         position_x = int(position[1])+moving[0]
-                        vaild_falg = self.is_valid(chess, position_x, position_y)
+                        valid_flag = self.is_valid(chess, position_x, position_y)
                 return chess, position_x, position_y
-
+        
         position = np.where(self.current_state == chess)
         if len(position[0]) != 0:
             position_y = int(position[0])+moving[1]
             position_x = int(position[1])+moving[0]
+            self.is_valid(chess, position_x, position_y)
 
         return chess, position_x, position_y
+            
 
     def refresh_detect(self,chess):
-        if(chess=="X"): chess_counter=0
-        elif(chess=="Y"): chess_counter=1
-        elif(chess=="Z"): chess_counter=2
-        elif(chess=="u"): chess_counter=3
-        elif(chess=="v"): chess_counter=4
-        elif(chess=="w"): chess_counter=5
+        if(chess=="X" or chess == "A"): chess_counter=0
+        elif(chess=="Y" or chess == "B"): chess_counter=1
+        elif(chess=="Z" or chess == "C"): chess_counter=2
+        elif(chess=="u" or chess == "e"): chess_counter=3
+        elif(chess=="v" or chess == "f"): chess_counter=4
+        elif(chess=="w" or chess == "g"): chess_counter=5
         else: print("chess_counter error")
-        self.userX_detect_chesses[chess_counter][:][:] = 0
+        self.detect_chesses[chess_counter][:][:] = 0
 
 def main():
     g = Game()
     g.draw_board()
     totalTime = round(0, 7)
 
-    while(1):
+    turn = None
 
+    while (turn != "A" and turn != "X"):
+        turn = input("""Play as (type "A" or "X"): """)
+
+    # 先手
+    if turn=="A":
+        g.player_turn = "X"
+        g.userA_chesses = ["X", "Y", "Z", "u", "v", "w"]
+        g.userX_chesses = ["A", "B", "C", "e", "f", "g"]
+    # 後手
+    elif turn=="X":
+        g.player_turn = "A"
+        g.userA_chesses = ["A", "B", "C", "e", "f", "g"]
+        g.userX_chesses = ["X", "Y", "Z", "u", "v", "w"]
+
+    while(1):
         print(" ")
 
         # A代表下棋者為使用者
@@ -482,7 +530,6 @@ def main():
             break
 
         print(" ")
-
         if g.player_turn == "X":
             # AI產生回應以及回應時間
             start = time.time()
@@ -491,14 +538,14 @@ def main():
                 for i in range(len(g.userX_chesses)):
                     g.evaluate(g.userX_chesses[i])
 
-            mychess, dx, dy = g.AI_generate_chess_index_with_evaluate()
+            myChess, dx, dy = g.AI_generate_chess_index_with_evaluate()
             end = time.time()
             totalTime += round(end - start, 7)
 
             print('Evaluation time: {}s'.format(round(end - start, 7)))
             print('Total evaluation time: {}s'.format(round(totalTime, 7)))
-            g.move(mychess, dx, dy)
-            print("AI chess: ", mychess, " dx:", dx, " dy:", dy)
+            g.move(myChess, dx, dy)
+            print("AI chess: ", myChess, " dx:", dx, " dy:", dy)
             g.draw_board()
 
             # 換user
